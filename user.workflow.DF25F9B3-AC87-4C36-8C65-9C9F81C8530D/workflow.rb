@@ -31,7 +31,7 @@ def get_suggestion_words query
 
 	Net::HTTP.version_1_2
 	Net::HTTP.start(SUGGEST_URL, 80) { |http|
-		res_xml = http.get(API_URL + query).body.toutf8
+		res_xml = http.get(API_URL + URI.escape(query)).body.toutf8
 	}
 
 	Document.new(res_xml).elements.each('toplevel/CompleteSuggestion/') { |e1|
@@ -39,6 +39,8 @@ def get_suggestion_words query
 			array.push(e2.attributes['data'])
 		}
 	}
+
+	array.push query.toutf8 if array.size == 0
 
 	array
 end
